@@ -40,15 +40,23 @@ def create_ddl(df, table, replace, output_file):
     else:
         op_file = open(output_file, "w")
     if replace == 'N':
-        print(f"CREATE TABLE {table} ("+"\n", file=op_file)
+        print(f"CREATE TABLE {table} (", file=op_file)
     else:
-        print(f"CREATE OR REPLACE TABLE {table} ("+"\n", file=op_file)
+        print(f"CREATE OR REPLACE TABLE {table} (", file=op_file)
     counter = 0
-    for column in df.to_dict(orient='records'):
+    for col in df.to_dict(orient='records'):
         if counter < len(df)-1:
-            print(f"{column['name']} {column['type']} COMMENT '{column['comment']}',", file=op_file)
+            print(
+                "\t"+
+                f"{col['name']} {col['type']} COMMENT '{col['comment']}',",
+                file=op_file
+            )
         else:
-            print(f"{column['name']} {column['type']} COMMENT '{column['comment']}'", file=op_file)
+            print(
+                "\t"+
+                f"{col['name']} {col['type']} COMMENT '{col['comment']}'", 
+                file=op_file
+            )
         counter += 1
     print(");\n", file=op_file)
     op_file.close()
@@ -62,8 +70,16 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--file", required=True)
     parser.add_argument("-t", "--table", required=True)
     parser.add_argument("-x", "--extension", required=False, default="csv")
-    parser.add_argument("-o", "--output", required=False, default="~/ddl_output.sql")
-    parser.add_argument("-r", "--replace", required=False, default="N", choices=['Y', 'N'])
+    parser.add_argument(
+        "-o", "--output", 
+        required=False, 
+        default="~/ddl_output.sql"
+    )
+    parser.add_argument(
+        "-r", "--replace", 
+        required=False, 
+        default="N", choices=['Y', 'N']
+    )
     args = parser.parse_args()
 
     file_name = args.file
