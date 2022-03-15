@@ -21,11 +21,11 @@ def read_file(file_name, file_type='csv'):
         if column.lower() not in accepted_columns:
             df.drop(column, axis=1)
             continue
-        if "name" in column:
+        if "name" in column.lower():
             df.rename({column:"column_name"})
-        elif "type" in column:
+        elif "type" in column.lower():
             df.rename({column:"data_type"})
-        elif "comment" in column:
+        elif "comment" in column.lower():
             df.rename({column:"comment"})
         else:
             df.drop(column, axis=1)
