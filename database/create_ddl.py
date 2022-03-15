@@ -1,6 +1,8 @@
 #Author: Viswanadha-Aditya
 
 import argparse
+import os
+
 import pandas as pd
 
 accepted_columns = [
@@ -33,17 +35,23 @@ def read_file(file_name, file_type='csv'):
     return df 
 
 def create_ddl(df, table, replace, output_file):
-    with open(output_file, "w") as op_file:
-        if replace == 'N':
-            print(f"CREATE TABLE {table} ("+"\n", file=op_file)
+    if os.path.isfile(output_file):
+        op_file = open(output_file, "a")
+    else:
+        op_file = open(output_file, "w")
+    if replace == 'N':
+        print(f"CREATE TABLE {table} ("+"\n", file=op_file)
+    else:
+        print(f"CREATE OR REPLACE {table} ("+"\n", file=op_file)
+    counter = 0
+    for column in df.to_dict(orient='records'):
+        if counter < len(df)-1:
+            print(f"{column['name']} {column['type']} COMMENT '{column['comment']}',")
         else:
-            print(f"CREATE OR REPLACE {table} ("+"\n", file=op_file)
-        for column in df.to_dict(orient='records'):
-            if column.index < len(df)-1:
-                print(f"{column.name} {column.type} COMMENT {column.comment},")
-            else:
-                print(f"{column.name} {column.type} COMMENT {column.comment}")
-        print(");\n", file=op_file)
+            print(f"{column['name']} {column['type']} COMMENT '{column['comment']}'")
+        counter += 1
+    print(");\n", file=op_file)
+    op_file.close()
     print(f"DDL created in {output_file}")
     return True
 
