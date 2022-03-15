@@ -42,13 +42,13 @@ def create_ddl(df, table, replace, output_file):
     if replace == 'N':
         print(f"CREATE TABLE {table} ("+"\n", file=op_file)
     else:
-        print(f"CREATE OR REPLACE {table} ("+"\n", file=op_file)
+        print(f"CREATE OR REPLACE TABLE {table} ("+"\n", file=op_file)
     counter = 0
     for column in df.to_dict(orient='records'):
         if counter < len(df)-1:
-            print(f"{column['name']} {column['type']} COMMENT '{column['comment']}',")
+            print(f"{column['name']} {column['type']} COMMENT '{column['comment']}',", file=op_file)
         else:
-            print(f"{column['name']} {column['type']} COMMENT '{column['comment']}'")
+            print(f"{column['name']} {column['type']} COMMENT '{column['comment']}'", file=op_file)
         counter += 1
     print(");\n", file=op_file)
     op_file.close()
